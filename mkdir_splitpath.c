@@ -1,21 +1,22 @@
 
-
+#include <stdbool.h>
 #include "types.h"
+
 
 extern struct NODE* root;
 extern struct NODE* cwd;
 
 struct NODE* findNode(struct NODE* parent, char* targetPath,char* targetName) {
-	NODE* f = parent;
+	struct NODE* f = parent;
 	while (f != NULL || !(strcmp(f->name,targetName))){
 		if (strcmp(parent->name,targetName)) {
 			f = parent;
 		}else {
-			targetpath = strchr(targetPath,'/') + 1;
+			targetPath = strchr(targetPath,'/') + 1;
 			char* hunt = NULL;
 			char* target = NULL;
 			bool end = false;
-			char tarEnd = strchr(targetPath,'/')-1;
+			char* tarEnd = strchr(targetPath,'/')-1;
 			if (tarEnd == NULL) {
 				end = true;
 			}	
@@ -25,25 +26,25 @@ struct NODE* findNode(struct NODE* parent, char* targetPath,char* targetName) {
 			strncpy(hunt,targetPath,offset);
 			bool found = false;
 			while (!found) {
-				if (parent.siblingPtr == NULL) {
+				if (parent->siblingPtr == NULL) {
 					found = true;
 				} else if(strcmp(parent->siblingPtr->name,targetName)) {
-					f = parent.siblingPtr
+					f = parent->siblingPtr
 					found = true;
 				} else if (end != true) {
 					if (strcmp(parent->siblingPtr->name,hunt)) {
-						parent = parent.siblingPtr;
+						parent = parent->siblingPtr;
 						found = true;
 					}	
 				} else {
-					f = findNode(parent.siblingPtr,target,targetName);
+					f = findNode(parent->siblingPtr,target,targetName);
 				}
 			}
 			if (end != true) {
-				if (parent.childPtr == NULL) {
+				if (parent->childPtr == NULL) {
 					f = NULL;
 				} else {
-					f = findNode(parent.childPtr,target,targetName)
+					f = findNode(parent->childPtr,target,targetName)
 				}
 			}	
 		}
@@ -60,7 +61,7 @@ void mkdir(char pathName[]) {
 		printf("MKDIR ERROR: no path provided");
 		return;
 	}
-	NODE* temp = NULL;
+	struct NODE* temp = NULL;
 	temp = splitPath(pathName,baseName,dirName);
 	if (temp == NULL) {
 		printf("ERROR: directory %s does not exist", strtok(dirName, "/"));
@@ -72,7 +73,7 @@ void mkdir(char pathName[]) {
 		return;
 	}
 	struct NODE* newDir = (struct NODE*)malloc(sizeof(struct NODE));
-	strncpy(newDir->name,baseName,63)
+	strncpy(newDir->name,baseName,63);
 	newDir->name[63] = '/0';
 	newDir->fileType = 'D'
 	newDir->childPtr = NULL;
