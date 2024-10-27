@@ -20,7 +20,6 @@ struct NODE* findNode(struct NODE* parent, char* targetPath,char* targetName) {
 			if (tarEnd == NULL) {
 				end = true;
 			}	
-			target = targetPath - tarEnd;
 			int offset = tarEnd - targetPath;
 			strcpy(target,tarEnd +1);
 			strncpy(hunt,targetPath,offset);
@@ -29,7 +28,7 @@ struct NODE* findNode(struct NODE* parent, char* targetPath,char* targetName) {
 				if (parent->siblingPtr == NULL) {
 					found = true;
 				} else if(strcmp(parent->siblingPtr->name,targetName)) {
-					f = parent->siblingPtr
+					f = parent->siblingPtr;
 					found = true;
 				} else if (end != true) {
 					if (strcmp(parent->siblingPtr->name,hunt)) {
@@ -44,7 +43,7 @@ struct NODE* findNode(struct NODE* parent, char* targetPath,char* targetName) {
 				if (parent->childPtr == NULL) {
 					f = NULL;
 				} else {
-					f = findNode(parent->childPtr,target,targetName)
+					f = findNode(parent->childPtr,target,targetName);
 				}
 			}	
 		}
@@ -57,7 +56,7 @@ void mkdir(char pathName[]) {
 	char* baseName = NULL;
 	char* dirName = NULL;
 	if (pathName == NULL || strlen(pathName) == 0) {
-		pathName[0] = "/";
+		pathName[0] = '/';
 		printf("MKDIR ERROR: no path provided");
 		return;
 	}
@@ -75,9 +74,9 @@ void mkdir(char pathName[]) {
 	struct NODE* newDir = (struct NODE*)malloc(sizeof(struct NODE));
 	strncpy(newDir->name,baseName,63);
 	newDir->name[63] = '/0';
-	newDir->fileType = 'D'
+	newDir->fileType = 'D';
 	newDir->childPtr = NULL;
-	newDir-siblingPtr = NULL;
+	newDir->siblingPtr = NULL;
 	newDir->parentPtr = temp;
 	if (temp->childPtr == NULL) {
 		temp->childPtr = newDir;
@@ -115,7 +114,7 @@ struct NODE* splitPath(char* pathName, char* baseName, char* dirName){
 	struct Node* parent = NULL;
 	char* parentName = NULL;
 	strcpy(parentName,strrchr(dirName, '/')+1);
-	if (pathname[0] == '/') {
+	if (pathName[0] == '/') {
 		parent = root;
 	} else {
 		parent = findNode(root,dirName,parentName);
