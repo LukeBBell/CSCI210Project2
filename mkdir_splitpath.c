@@ -96,10 +96,11 @@ struct NODE* splitPath(char* pathName, char* baseName, char* dirName){
 	if (offset == 0) {
 		strcpy(dirName,"/");
 		strcpy(baseName,dirEnd+1);
+	}else {
+		strncpy(dirName,pathName,offset);
+		dirName[offset] = '/0';
+		strcpy(baseName,dirEnd + 1);
 	}
-	strncpy(dirName,pathName,offset);
-	dirName[offset] = '/0';
-	strcpy(baseName,dirEnd + 1);
 	struct Node* parent = malloc(sizeof(struct NODE));
 	findNode(dirName,parent);
     return parent;
