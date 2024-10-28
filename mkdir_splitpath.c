@@ -53,7 +53,6 @@ void mkdir(char pathName[]) {
 		printf("ERROR: directory %s does not exist", strtok(dirName, '/'));
 		return;
 	}
-	char* temp2 = strcat("/",baseName);
 	struct NODE* child = malloc(sizeof(struct NODE));
 	while (child != NULL) {
 		if (strcmp(child->name,baseName) == 0) {
@@ -62,9 +61,8 @@ void mkdir(char pathName[]) {
 		}
 		child = child->siblingPtr;
 	}
-	struct NODE* newDir = (struct NODE*)malloc(sizeof(struct NODE));
-	strncpy(newDir->name,baseName,63);
-	newDir->name[63] = '/0';
+	struct NODE* newDir = malloc(sizeof(struct NODE));
+	strcpy(newDir->name,baseName);
 	newDir->fileType = 'D';
 	newDir->childPtr = NULL;
 	newDir->siblingPtr = NULL;
