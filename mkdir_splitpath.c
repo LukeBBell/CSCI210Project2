@@ -26,9 +26,9 @@ struct NODE* findNode (char* dirName) {
 		if (currentNode == NULL) {
 			return currentNode;
 		}
-		while(strcmp(currentNode->name,currdurr)) {
-			if(currentNode == NULL) {
-				return currentNode;
+		while(strcmp(currentNode->name,currdurr) != 0) {
+			if(currentNode->siblingPtr == NULL) {
+				return NULL;
 			}
 			currentNode = currentNode->siblingPtr;
 		}
@@ -42,15 +42,13 @@ struct NODE* findNode (char* dirName) {
 void mkdir(char pathName[]) {
 	char* baseName = malloc(256);
 	char* dirName = malloc(256);
-	if (pathName == NULL || strlen(pathName) == 0) {
-		pathName[0] = '/';
-		printf("MKDIR ERROR: no path provided");
-		
+	if (strcmp(pathName,"/") == 0) {
+		printf("MKDIR ERROR: no path provided\n");
 		return;
 	}
 	struct NODE* temp = splitPath(pathName,baseName,dirName);
 	if (temp == NULL) {
-		printf("ERROR: directory %s does not exist", dirName);
+		printf("ERROR: directory %s does not exist\n", dirName);
 		return;
 	}
 	struct NODE* child = temp->childPtr;
