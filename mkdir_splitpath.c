@@ -7,13 +7,13 @@ extern struct NODE* root;
 extern struct NODE* cwd;
 
 
-void findNode (char* dirName,struct NODE* currentNode) {
+struct NODE* findNode (char* dirName) {
+	struct NODE* currentNode = malloc(sizeof(struct NODE));
 	char* currdurr = malloc(256);
 	char* dircpy = malloc(256);
 	strcpy(dircpy,dirName);
-	if (strcmp(dirName,"/") == 0) {
-		currentNode = root;
-		return;
+	if (strcmp(dirName,"/") == 0){
+		return root;
 	} else if (dirName[0] == '/') {
 		currentNode = root;
 		currdurr = strtok(dircpy+1,"/");
@@ -23,19 +23,19 @@ void findNode (char* dirName,struct NODE* currentNode) {
 	}
 	while(currdurr != NULL) {
 		currentNode = currentNode->childPtr;
-		if (currdurr == NULL) {
-			return;
+		if (currentNode == NULL) {
+			return currentNode;
 		}
 		while(strcmp(currentNode->name,currdurr)) {
 			if(currentNode == NULL) {
-				return;
+				return currentNode;
 			}
 			currentNode = currentNode->siblingPtr;
 		}
 		currdurr = strtok(NULL,"/");
 	}
 
-	return;
+	return currentNode;
 }
 
 //make directory
@@ -99,7 +99,6 @@ struct NODE* splitPath(char* pathName, char* baseName, char* dirName){
 		}
 		strcpy(baseName,dirEnd + 1);
 	}
-	struct NODE* parent = malloc(sizeof(struct NODE));
-	findNode(dirName,parent);
+	struct NODE* parent = findNode(dirName);
     return parent;
 }
