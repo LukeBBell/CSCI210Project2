@@ -34,6 +34,7 @@ void findNode (char* dirName,struct NODE* currentNode) {
 		}
 		currdurr = strtok(NULL,"/");
 	}
+
 	return;
 }
 
@@ -47,13 +48,12 @@ void mkdir(char pathName[]) {
 		
 		return;
 	}
-	struct NODE* temp = malloc(sizeof(struct NODE));
-	temp = splitPath(pathName,baseName,dirName);
+	struct NODE* temp = splitPath(pathName,baseName,dirName);
 	if (temp == NULL) {
-		printf("ERROR: directory %s does not exist", strtok(dirName, '/'));
+		printf("ERROR: directory %s does not exist", dirName);
 		return;
 	}
-	struct NODE* child = malloc(sizeof(struct NODE));
+	struct NODE* child = temp->childPtr;
 	while (child != NULL) {
 		if (strcmp(child->name,baseName) == 0) {
 			printf("MKDIR ERROR: directory %s already exists\n",pathName);
@@ -95,11 +95,11 @@ struct NODE* splitPath(char* pathName, char* baseName, char* dirName){
 			strcpy(dirName,"/");
 		}else {
 			strncpy(dirName,pathName,offset);
-			dirName[offset] = '/0';
+			dirName[offset] = '\0';
 		}
 		strcpy(baseName,dirEnd + 1);
 	}
-	struct Node* parent = malloc(sizeof(struct NODE));
+	struct NODE* parent = malloc(sizeof(struct NODE));
 	findNode(dirName,parent);
     return parent;
 }
