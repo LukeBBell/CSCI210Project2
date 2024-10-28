@@ -6,70 +6,61 @@
 extern struct NODE* root;
 extern struct NODE* cwd;
 
-struct NODE* findNode(struct NODE* parent, char* targetPath,char* targetName) {
-	struct NODE* f = parent;
-	while (f != NULL || !(strcmp(f->name,targetName))){
-		if (strcmp(parent->name,targetName)) {
-			f = parent;
-		}else {
-			targetPath = strchr(targetPath,'/') + 1;
-			char* hunt = NULL;
-			char* target = NULL;
-			bool end = false;
-			char* tarEnd = strchr(targetPath,'/')-1;
-			if (tarEnd == NULL) {
-				end = true;
-			}	
-			int offset = tarEnd - targetPath;
-			strcpy(target,tarEnd +1);
-			strncpy(hunt,targetPath,offset);
-			bool found = false;
-			while (!found) {
-				if (parent->siblingPtr == NULL) {
-					found = true;
-				} else if(strcmp(parent->siblingPtr->name,targetName)) {
-					f = parent->siblingPtr;
-					found = true;
-				} else if (end != true) {
-					if (strcmp(parent->siblingPtr->name,hunt)) {
-						parent = parent->siblingPtr;
-						found = true;
-					}	
-				} else {
-					f = findNode(parent->siblingPtr,target,targetName);
-				}
-			}
-			if (end != true) {
-				if (parent->childPtr == NULL) {
-					f = NULL;
-				} else {
-					f = findNode(parent->childPtr,target,targetName);
-				}
-			}	
-		}
+
+void findNode (char* dirName,struct NODE* currentNode) {
+	char* currdurr = malloc(256);
+	char* dircpy = malloc(256);
+	strcpy(dircpy,dirName);
+	if (strcmp(dirName,"/") == 0) {
+		currentNode = root;
+		return;
+	} else if (dirName[0] == '/') {
+		currentNode = root;
+		currdurr = strtok(dircpy+1,"/");
+	} else {
+		currentNode = cwd;
+		currdurr = strtok(dircpy,"/");
 	}
-	return f;
+	while(currdurr != NULL) {
+		currentNode = currentNode->childPtr;
+		if (currdurr == NULL) {
+			return;
+		}
+		while(strcmp(currentNode->name,currdurr)) {
+			if(currentNode == NULL) {
+				return;
+			}
+			currentNode = currentNode->siblingPtr;
+		}
+		currdurr = strtok(NULL,"/");
+	}
+	return;
 }
 
 //make directory
 void mkdir(char pathName[]) {
-	char* baseName = NULL;
-	char* dirName = NULL;
+	char* baseName = malloc(256);
+	char* dirName = malloc(256);
 	if (pathName == NULL || strlen(pathName) == 0) {
 		pathName[0] = '/';
 		printf("MKDIR ERROR: no path provided");
+		
 		return;
 	}
-	struct NODE* temp = NULL;
+	struct NODE* temp = malloc(sizeof(struct NODE));
 	temp = splitPath(pathName,baseName,dirName);
 	if (temp == NULL) {
-		printf("ERROR: directory %s does not exist", strtok(dirName, "/"));
+		printf("ERROR: directory %s does not exist", strtok(dirName, '/'));
 		return;
 	}
 	char* temp2 = strcat("/",baseName);
-	if (findNode(temp,temp2,baseName) != NULL) {
-		printf("ERROR: directory %s already exists", baseName);
-		return;
+	struct NODE* child = malloc(sizeof(struct NODE));
+	while (child != NULL) {
+		if (strcmp(child->name,baseName) == 0) {
+			printf("MKDIR ERROR: directory %s already exists\n",pathName);
+			return;
+		}
+		child = child->siblingPtr;
 	}
 	struct NODE* newDir = (struct NODE*)malloc(sizeof(struct NODE));
 	strncpy(newDir->name,baseName,63);
@@ -98,26 +89,18 @@ void mkdir(char pathName[]) {
 struct NODE* splitPath(char* pathName, char* baseName, char* dirName){
 	char* dirEnd = strrchr(pathName, '/');
 	if (dirEnd == NULL) {
-		dirName = "";
-		baseName = pathName;
-		return NULL;
+		dirName = malloc(256);
+		strcpy(baseName,pathName);
 	}	
 	int offset = dirEnd - pathName;
 	if (offset == 0) {
-		dirName = "/";
-		baseName = "";
-		return NULL;
+		strcpy(dirName,"/");
+		strcpy(baseName,dirEnd+1);
 	}
 	strncpy(dirName,pathName,offset);
 	dirName[offset] = '/0';
 	strcpy(baseName,dirEnd + 1);
-	struct Node* parent = NULL;
-	char* parentName = NULL;
-	strcpy(parentName,strrchr(dirName, '/')+1);
-	if (pathName[0] == '/') {
-		parent = root;
-	} else {
-		parent = findNode(root,dirName,parentName);
-	}
+	struct Node* parent = malloc(sizeof(struct NODE));
+	findNode(dirName,parent);
     return parent;
 }
